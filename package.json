@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "@actions/core": "^1.6.0",
+    "@actions/github": "^5.0.0",
+    "sharp": "^0.29.3",
+    "twitter": "^1.7.1"
+  },
+  "scripts": {
+    "run-test": "ncc build index.js --license licenses.txt && git add . && git commit --amend --no-edit && git push origin master --force"
+  }
+}
