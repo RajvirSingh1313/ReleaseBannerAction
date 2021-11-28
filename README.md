@@ -1,1 +1,1 @@
-# TwitterBannerAction
+# ReleaseBannerAction

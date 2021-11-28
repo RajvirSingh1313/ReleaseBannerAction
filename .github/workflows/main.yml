@@ -1,18 +1,25 @@
-on: [push]
+on:
+  watch:
+    types: [started]
+  release:
+    types: [published]
 
 jobs:
   Testing:
     runs-on: ubuntu-latest
-    name: A job to say hello
+    name: Trying ReleaseBannerAction
     steps:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Action
         uses: ./
         with:
+          action-name: ${{github.event.action}}
+          banner-theme: Dark
+          release-version: ${{ github.event.release.tag_name }}
           repo-content-object: ${{ toJson(github) }}
-          status: "Hi, this is a test!"
-          consumer-key: ${{ secrets.TWITTER_CONSUMER_API_KEY }}
-          consumer-secret: ${{ secrets.TWITTER_CONSUMER_API_SECRET }}
-          access-token: ${{ secrets.TWITTER_ACCESS_TOKEN }}
-          access-token-secret: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}
+          discord-webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          twitter-consumer-key: ${{ secrets.TWITTER_CONSUMER_API_KEY }}
+          twitter-consumer-secret: ${{ secrets.TWITTER_CONSUMER_API_SECRET }}
+          twitter-access-token: ${{ secrets.TWITTER_ACCESS_TOKEN }}
+          twitter-access-token-secret: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}

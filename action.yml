@@ -2,23 +2,35 @@ name: 'TwitterBannerAction'
 description: 'Post a tweet when new release is out.'
 author: 'Rajvir Singh'
 inputs:
+  action-name:
+    description: It is for seeing whether action need to perform action on new release or repo surpassing certain threshold.
+    required: true
   repo-content-object:
     description: Object for gathering information from github api about the project for showing in the banner.
-  status:
-    description: The status ("tweet") to post to twitter.
-  consumer-key:
+    required: true
+  release-version:
+    description: For showing the latest release version in the banner.
+    required: true
+  platform:
+    description: For knowing on which platform the message should be sent. Type twitter or discord as input, if want both input Both. Default is Both
+  banner-theme:
+    description: Theme for the banner, There are three types of themes => Dark, Orange, Blue. Default is Dark
+
+  discord-webhook-url:
+    description: Discord webhook url for making a message.
+  twitter-consumer-key:
     description: >
       Consumer API key, available in the "Keys and tokens"
       section of your application in the Twitter Developer site.
-  consumer-secret:
+  twitter-consumer-secret:
     description: >
       Consumer API secret key, available in the "Keys and tokens"
       section of your application in the Twitter Developer site.
-  access-token:
+  twitter-access-token:
     description: >
       Application access token, available in the "Keys and tokens"
       section of your application in the Twitter Developer site.
-  access-token-secret:
+  twitter-access-token-secret:
     description: >
       Application access token secret, available in the "Keys and tokens"
       section of your application in the Twitter Developer site.

@@ -2,6 +2,8 @@
   "dependencies": {
     "@actions/core": "^1.6.0",
     "@actions/github": "^5.0.0",
+    "axios": "^0.24.0",
+    "discord-webhook-node": "^1.1.8",
     "sharp": "^0.29.3",
     "twitter": "^1.7.1"
   },
