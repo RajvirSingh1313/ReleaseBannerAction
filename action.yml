@@ -1,7 +1,8 @@
-name: 'TwitterBannerAction'
-description: 'Post a tweet when new release is out.'
+name: 'ReleaseBannerAction'
+description: 'ReleaseBannerAction creates custom banners about new releases or for certain GitHub stars thresholds and then posts the banner on Twitter or Discord.'
 author: 'Rajvir Singh'
 inputs:
+  # Important
   action-name:
     description: It is for seeing whether action need to perform action on new release or repo surpassing certain threshold.
     required: true
@@ -13,9 +14,23 @@ inputs:
     required: true
   platform:
     description: For knowing on which platform the message should be sent. Type twitter or discord as input, if want both input Both. Default is Both
+    required: true
+
+
+  # Customizations
   banner-theme:
     description: Theme for the banner, There are three types of themes => Dark, Orange, Blue. Default is Dark
+  custom-banner:
+    description: If you have custom banner, then enter the url of the banner you created, please learn more about how to create custom banner here :- https://github.com/RajvirSingh1313/ReleaseBannerAction#How-Create-&-Use-Custom-Banner
+  primary-color:
+    description: If have primary color for your custom banner then you can customize the primary color of the texts in the image.
+  secondary-color:
+    description: If have secondary color for your custom banner then you can customize the secondary color of the texts in the image.
+  custom-message:
+    description: If you are not happy with the default message that is sent with the banner, then you can input the message you like here.
 
+
+  # Essentials
   discord-webhook-url:
     description: Discord webhook url for making a message.
   twitter-consumer-key:

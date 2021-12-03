@@ -5,12 +5,11 @@ const fs = require('fs');
 const sharp = require("sharp");
 const axios = require('axios');
 const { Webhook } = require('discord-webhook-node');
+const { exit } = require('process');
 
 /*
 Things I need to do right now:
-    * stars banner customization
     * Let the user have their own banners with custom colors, you can give them the resolution and other stuff about how to create the banner correctly
-    * custom message for sending
     * Improve your doc, tell user how to get the data to make the github action running perfectly
     * Make custom themes for the github stars threshold
     * Add comments to the code if possible
@@ -31,43 +30,56 @@ try {
     const githubObject = JSON.parse(core.getInput('repo-content-object'));
 
     setTimeout(() => {
-        const ActionName = core.getInput('action-name');
+        const ReleaseVersion = core.getInput('release-version').toUpperCase();
+        const ActionName = core.getInput('action-name').toLowerCase();
 
         let Emoji;
         let title;
-        if (ActionName === "started"){
+        if (ActionName === "started") {
             Emoji = fs.readFileSync('./Resources/Emojis/StarEmoji.png');
 
-            if (githubObject["event"]["repository"]["stargazers_count"]<50){
+            if (githubObject["event"]["repository"]["stargazers_count"] >= 50) {
                 title = `${githubObject["repository"].split('/')[1]} have gotten over 50 Stars`;
             }
-            if (githubObject["event"]["repository"]["stargazers_count"] < 100){
+            if (githubObject["event"]["repository"]["stargazers_count"] >= 100) {
                 title = `${githubObject["repository"].split('/')[1]} have gotten over 100 Stars`;
             }
-            if (githubObject["event"]["repository"]["stargazers_count"] < 500){
+            if (githubObject["event"]["repository"]["stargazers_count"] >= 500) {
                 title = `${githubObject["repository"].split('/')[1]} have gotten over 500 Stars`;
             }
-            if (githubObject["event"]["repository"]["stargazers_count"] < 1000){
+            if (githubObject["event"]["repository"]["stargazers_count"] >= 1000) {
                 title = `${githubObject["repository"].split('/')[1]} have gotten over 1k Stars`;
             }
-            if (githubObject["event"]["repository"]["stargazers_count"] < 10000){
+            if (githubObject["event"]["repository"]["stargazers_count"] >= 10000) {
                 title = `${githubObject["repository"].split('/')[1]} have gotten over 10k Stars`;
             }
-            if (githubObject["event"]["repository"]["stargazers_count"] < 50000){
+            if (githubObject["event"]["repository"]["stargazers_count"] >= 50000) {
                 title = `${githubObject["repository"].split('/')[1]} have gotten over 50k Stars`;
             }
-            if (githubObject["event"]["repository"]["stargazers_count"] < 100000){
+            if (githubObject["event"]["repository"]["stargazers_count"] >= 100000) {
                 title = `${githubObject["repository"].split('/')[1]} have gotten over 100k Stars`;
             }
-        }else{
+        } else {
             Emoji = fs.readFileSync('./Resources/Emojis/ConfettiEmoji.png');
             title = `${githubObject["repository"].split('/')[1]} ${ReleaseVersion} is Released`;
         }
 
+        if(title===""||title===undefined){
+            console.log("Nothing to do");
+            exit();
+        }
+
         CreateImage(githubObject, title, Emoji);
         setTimeout(() => {
-            SendDiscordMessage(githubObject, title);
-            SendTweet(githubObject, title);
+            const platform = core.getInput("platform").toLowerCase();
+            if (platform === "both"){
+                SendDiscordMessage(githubObject, title);
+                SendTweet(githubObject, title);
+            }else if(platform==="discord"){
+                SendDiscordMessage(githubObject, title);
+            }else{
+                SendTweet(githubObject, title);
+            }
         }, 10000);
     }, 1000);
 } catch (error) {
@@ -79,10 +91,18 @@ try {
 function kFormatter(num) {
     return Math.abs(num) > 999 ? Math.sign(num) * ((Math.abs(num) / 1000).toFixed(1)) + 'k' : Math.sign(num) * Math.abs(num)
 }
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
 function CreateImage(data, title, Emoji) {
-    const ReleaseVersion = core.getInput('release-version');
-    const BannerTheme = core.getInput('banner-theme');
+    let BannerTheme;
+    if (core.getInput('banner-theme')!==""&&core.getInput('banner-theme')!==undefined) {
+        BannerTheme = capitalizeFirstLetter(core.getInput('banner-theme'));
+    }else{
+        BannerTheme = "Dark";
+    }
+
     let totalContributors;
 
     axios.get(data['event']['repository']['collaborators_url'])
@@ -106,6 +126,13 @@ function CreateImage(data, title, Emoji) {
         } else if (BannerTheme === "Orange") {
             primaryColor = '#CC7025';
             secondaryColor = '#7CC5FF';
+        }
+
+        if (core.getInput("primary-color")!==undefined&&core.getInput("primary-color")!==""){
+            primaryColor = core.getInput("primary-color");
+        }
+        if (core.getInput("secondary-color")!==undefined&&core.getInput("secondary-color")!==""){
+            secondaryColor = core.getInput("secondary-color");
         }
 
         const width = 1012;
@@ -143,7 +170,14 @@ function CreateImage(data, title, Emoji) {
 
         const svgBuffer = Buffer.from(svgImage);
 
-        sharp(`./Resources/BannerTemplates/${BannerTheme}.png`)
+        const customBanner = core.getInput("custom-banner");
+        let templateBanner = `./Resources/BannerTemplates/${BannerTheme}.png`;
+
+        if(customBanner!==""&&customBanner!==undefined&&customBanner!==" ") {
+            templateBanner = customBanner;
+        }
+
+        sharp(templateBanner)
             .composite([
                 {
                     input: svgBuffer
@@ -179,14 +213,20 @@ function SendTweet(githubObject, title) {
         if (error) {
             console.log(error)
         } else {
-            const ActionName = core.getInput('action-name');
+            const ActionName = core.getInput('action-name').toLowerCase();
 
             let message;
 
-            if( ActionName === "started"){
+            if (ActionName === "started") {
                 message = `${title} 🌟\n\n${githubObject['event']['repository']['description']}\n\nCheck it out :- ${githubObject['event']['repository']['html_url']}`;
-            }else{
+            } else {
                 message = `${githubObject["repository"].split('/')[1]} ${core.getInput('release-version')} is Released 🎉\n\n${githubObject['event']['repository']['description']}\n\nCheck it out :- ${githubObject['event']['repository']['html_url']}`;
+            }
+
+            const CustomMessage = core.getInput('custom-message');
+
+            if(CustomMessage !== " " && CustomMessage !== ""){
+                message = CustomMessage;
             }
 
             const status = {
@@ -209,7 +249,7 @@ function SendTweet(githubObject, title) {
 function SendDiscordMessage(githubObject, title) {
     const hook = new Webhook(core.getInput('discord-webhook-url'));
 
-    const ActionName = core.getInput('action-name');
+    const ActionName = core.getInput('action-name').toLowerCase();
 
     let message;
 
@@ -220,6 +260,7 @@ function SendDiscordMessage(githubObject, title) {
     }
 
     hook.send(message);
-    hook.sendFile('./NeedToResizeImage.png');
-    hook.sendFile('./outputImage.png');
- };
+    setTimeout(()=>{
+        hook.sendFile('./outputImage.png');
+    },500);
+};
