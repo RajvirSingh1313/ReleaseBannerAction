@@ -2,12 +2,12 @@ on:
   watch:
     types: [started]
   release:
-    types: [published]
+    types: [released]
 
 jobs:
-  Testing:
+  Running:
     runs-on: ubuntu-latest
-    name: Trying ReleaseBannerAction
+    name: ReleaseBannerAction
     steps:
       - name: Checkout
         uses: actions/checkout@v2

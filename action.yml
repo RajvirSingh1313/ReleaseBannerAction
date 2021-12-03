@@ -19,7 +19,7 @@ inputs:
 
   # Customizations
   banner-theme:
-    description: Theme for the banner, There are three types of themes => Dark, Orange, Blue. Default is Dark
+    description: Theme for the banner, There are three types of themes => Dark, Orange, Blue, Wonder, LightYear. Default is Dark
   custom-banner:
     description: If you have custom banner, then enter the url of the banner you created, please learn more about how to create custom banner here :- https://github.com/RajvirSingh1313/ReleaseBannerAction#How-Create-&-Use-Custom-Banner
   primary-color:

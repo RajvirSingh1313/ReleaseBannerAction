@@ -1,5 +1,13 @@
+/*
+1. The core module from the @actions/core package. This is the main module that contains all the functions we’ll be using.
+2. The Twitter module from the twitter package. This is the module that will allow us to interact with the Twitter API.
+3. The fs module from the fs package. This is the module that will allow us to interact with the file system.
+4. The sharp module from the sharp package. This is the module that will allow us to manipulate images.
+5. The axios module from the axios package. This is the module that will allow us to make requests.
+6. The Webhook module from the discord-webhook-node package. This is the module that will allow us to interact with the Discord API.
+7. The exit function from the process package. This is the function that will allow us to exit the script.
+*/
 const core = require('@actions/core');
-const github = require('@actions/github');
 const Twitter = require('twitter')
 const fs = require('fs');
 const sharp = require("sharp");
@@ -9,7 +17,6 @@ const { exit } = require('process');
 
 /*
 Things I need to do right now:
-    * Let the user have their own banners with custom colors, you can give them the resolution and other stuff about how to create the banner correctly
     * Improve your doc, tell user how to get the data to make the github action running perfectly
     * Make custom themes for the github stars threshold
     * Add comments to the code if possible
@@ -21,90 +28,106 @@ Things I need to do right now:
         * Showing the tags of the repo in the banner
 */
 
-
+// CreateImage is a function that will create a dynamic image depending on the data using sharp node module.
 function CreateImage() { }
+// SendTweet is a function that will send a tweet with banner.
 function SendTweet() { }
+// SendDiscordMessage is a function that will send a message with a banner.
 function SendDiscordMessage() { }
 
+// Using try and catch to prevent failing
 try {
     const githubObject = JSON.parse(core.getInput('repo-content-object'));
 
+    // Using UpperCase to prevent any mistakes in the action file
+    const ReleaseVersion = core.getInput('release-version').toUpperCase();
+    const ActionName = core.getInput('action-name').toLowerCase();
+
+    let Emoji;
+    let title;
+
+    // started is triggered when someone stars the repository
+    if (ActionName === "started") {
+        Emoji = fs.readFileSync('./Resources/Emojis/StarEmoji.png');
+
+        // if repository is over 50, or 100, more than that. The title will be adjusted accordingly
+        if (githubObject["event"]["repository"]["stargazers_count"] === 50) {
+            title = `${githubObject["repository"].split('/')[1]} have gotten over 50 Stars`;
+        }
+        if (githubObject["event"]["repository"]["stargazers_count"] === 100) {
+            title = `${githubObject["repository"].split('/')[1]} have gotten over 100 Stars`;
+        }
+        if (githubObject["event"]["repository"]["stargazers_count"] === 500) {
+            title = `${githubObject["repository"].split('/')[1]} have gotten over 500 Stars`;
+        }
+        if (githubObject["event"]["repository"]["stargazers_count"] === 1000) {
+            title = `${githubObject["repository"].split('/')[1]} have gotten over 1k Stars`;
+        }
+        if (githubObject["event"]["repository"]["stargazers_count"] === 10000) {
+            title = `${githubObject["repository"].split('/')[1]} have gotten over 10k Stars`;
+        }
+        if (githubObject["event"]["repository"]["stargazers_count"] === 50000) {
+            title = `${githubObject["repository"].split('/')[1]} have gotten over 50k Stars`;
+        }
+        if (githubObject["event"]["repository"]["stargazers_count"] === 100000) {
+            title = `${githubObject["repository"].split('/')[1]} have gotten over 100k Stars`;
+        }
+    } else {
+        // Else is when a new release is published
+        Emoji = fs.readFileSync('./Resources/Emojis/ConfettiEmoji.png');
+        title = `${githubObject["repository"].split('/')[1]} ${ReleaseVersion} is Released`;
+    }
+
+    // When there is no star record is broken or no new release is published then program just simply exits
+    if (title === "" || title === undefined) {
+        console.log("Nothing to do");
+        exit();
+    }
+
+    // Giving CreateImage() function, three variables, first object which contains data about the repository, second which is finalize title, last is the finalize emoji.
+    CreateImage(githubObject, title, Emoji);
+
+    // Using time out, to give CreateImage function to fully create the image before other functions run.
     setTimeout(() => {
-        const ReleaseVersion = core.getInput('release-version').toUpperCase();
-        const ActionName = core.getInput('action-name').toLowerCase();
 
-        let Emoji;
-        let title;
-        if (ActionName === "started") {
-            Emoji = fs.readFileSync('./Resources/Emojis/StarEmoji.png');
-
-            if (githubObject["event"]["repository"]["stargazers_count"] >= 50) {
-                title = `${githubObject["repository"].split('/')[1]} have gotten over 50 Stars`;
-            }
-            if (githubObject["event"]["repository"]["stargazers_count"] >= 100) {
-                title = `${githubObject["repository"].split('/')[1]} have gotten over 100 Stars`;
-            }
-            if (githubObject["event"]["repository"]["stargazers_count"] >= 500) {
-                title = `${githubObject["repository"].split('/')[1]} have gotten over 500 Stars`;
-            }
-            if (githubObject["event"]["repository"]["stargazers_count"] >= 1000) {
-                title = `${githubObject["repository"].split('/')[1]} have gotten over 1k Stars`;
-            }
-            if (githubObject["event"]["repository"]["stargazers_count"] >= 10000) {
-                title = `${githubObject["repository"].split('/')[1]} have gotten over 10k Stars`;
-            }
-            if (githubObject["event"]["repository"]["stargazers_count"] >= 50000) {
-                title = `${githubObject["repository"].split('/')[1]} have gotten over 50k Stars`;
-            }
-            if (githubObject["event"]["repository"]["stargazers_count"] >= 100000) {
-                title = `${githubObject["repository"].split('/')[1]} have gotten over 100k Stars`;
-            }
+        // Running functions accordingly to user's choice of platform.
+        const platform = core.getInput("platform").toLowerCase();
+        if (platform === "both") {
+            SendDiscordMessage(githubObject, title);
+            SendTweet(githubObject, title);
+        } else if (platform === "discord") {
+            SendDiscordMessage(githubObject, title);
         } else {
-            Emoji = fs.readFileSync('./Resources/Emojis/ConfettiEmoji.png');
-            title = `${githubObject["repository"].split('/')[1]} ${ReleaseVersion} is Released`;
+            SendTweet(githubObject, title);
         }
-
-        if(title===""||title===undefined){
-            console.log("Nothing to do");
-            exit();
-        }
-
-        CreateImage(githubObject, title, Emoji);
-        setTimeout(() => {
-            const platform = core.getInput("platform").toLowerCase();
-            if (platform === "both"){
-                SendDiscordMessage(githubObject, title);
-                SendTweet(githubObject, title);
-            }else if(platform==="discord"){
-                SendDiscordMessage(githubObject, title);
-            }else{
-                SendTweet(githubObject, title);
-            }
-        }, 10000);
-    }, 1000);
+    }, 10000);
 } catch (error) {
     core.setFailed(error.message);
 }
 
-
-
+// kFormatter is a function that converts a large number into a string, more like github's star count.
 function kFormatter(num) {
     return Math.abs(num) > 999 ? Math.sign(num) * ((Math.abs(num) / 1000).toFixed(1)) + 'k' : Math.sign(num) * Math.abs(num)
 }
+// capitalizeFirstLetter is a function that capitalize first letter in the string.
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
+// CreateImage is a function that will create a dynamic image depending on the data using sharp node module.
 function CreateImage(data, title, Emoji) {
     let BannerTheme;
-    if (core.getInput('banner-theme')!==""&&core.getInput('banner-theme')!==undefined) {
+
+    // If user have provided any banner-theme then it sets it, else it defaults to Dark
+    if (core.getInput('banner-theme') !== "" && core.getInput('banner-theme') !== undefined) {
         BannerTheme = capitalizeFirstLetter(core.getInput('banner-theme'));
-    }else{
+    } else {
         BannerTheme = "Dark";
     }
 
     let totalContributors;
 
+    // Getting total number of contributors
     axios.get(data['event']['repository']['collaborators_url'])
         .then(res => {
             totalContributors = res.data.length;
@@ -113,6 +136,7 @@ function CreateImage(data, title, Emoji) {
             console.log('Error: ', err.message);
         });
 
+    // Using setTimeout to wait until request have fully fetched the data.
     setTimeout(() => {
         let primaryColor = '#fff';
         let secondaryColor = '#ADBFFB';
@@ -128,17 +152,17 @@ function CreateImage(data, title, Emoji) {
             secondaryColor = '#7CC5FF';
         }
 
-        if (core.getInput("primary-color")!==undefined&&core.getInput("primary-color")!==""){
+        // If user have provided custom colors then sets the local variables accordingly
+        if (core.getInput("primary-color") !== undefined && core.getInput("primary-color") !== "") {
             primaryColor = core.getInput("primary-color");
         }
-        if (core.getInput("secondary-color")!==undefined&&core.getInput("secondary-color")!==""){
+        if (core.getInput("secondary-color") !== undefined && core.getInput("secondary-color") !== "") {
             secondaryColor = core.getInput("secondary-color");
         }
 
+
         const width = 1012;
         const height = 506;
-
-
 
         const svgImage = `
                     <svg width="${width}" height="${height}">
@@ -173,10 +197,13 @@ function CreateImage(data, title, Emoji) {
         const customBanner = core.getInput("custom-banner");
         let templateBanner = `./Resources/BannerTemplates/${BannerTheme}.png`;
 
-        if(customBanner!==""&&customBanner!==undefined&&customBanner!==" ") {
+
+        // Uses the custom banner, if it is provided by the user.
+        if (customBanner !== "" && customBanner !== undefined && customBanner !== " ") {
             templateBanner = customBanner;
         }
 
+        // Merges the svg and the emoji with the template banner
         sharp(templateBanner)
             .composite([
                 {
@@ -190,7 +217,9 @@ function CreateImage(data, title, Emoji) {
             ])
             .toFile("NeedToResizeImage.png");
 
+        // Wait for a moment until the image is fully produced
         setTimeout(() => {
+            // Resize the image to fit the twitter's post image resolution
             sharp(`NeedToResizeImage.png`).resize({
                 width: 1012 * 5,
                 height: 506 * 5
@@ -199,7 +228,10 @@ function CreateImage(data, title, Emoji) {
     }, 1000);
 }
 
+// SendTweet is a function that will send a tweet with banner.
 function SendTweet(githubObject, title) {
+
+    // Getting keys and initializing a new instance of Twitter
     const client = new Twitter({
         consumer_key: core.getInput('twitter-consumer-key'),
         consumer_secret: core.getInput('twitter-consumer-secret'),
@@ -209,6 +241,7 @@ function SendTweet(githubObject, title) {
 
     const imageData = fs.readFileSync("outputImage.png");
 
+    // Posting image with message
     client.post("media/upload", { media: imageData }, function (error, media, response) {
         if (error) {
             console.log(error)
@@ -217,6 +250,7 @@ function SendTweet(githubObject, title) {
 
             let message;
 
+            // Changing the title depending on the trigger
             if (ActionName === "started") {
                 message = `${title} 🌟\n\n${githubObject['event']['repository']['description']}\n\nCheck it out :- ${githubObject['event']['repository']['html_url']}`;
             } else {
@@ -225,7 +259,8 @@ function SendTweet(githubObject, title) {
 
             const CustomMessage = core.getInput('custom-message');
 
-            if(CustomMessage !== " " && CustomMessage !== ""){
+            // If user have provided a custom message, then uses it
+            if (CustomMessage !== " " && CustomMessage !== "") {
                 message = CustomMessage;
             }
 
@@ -246,21 +281,26 @@ function SendTweet(githubObject, title) {
 
 }
 
+// SendDiscordMessage is a function that will send a message with a banner.
 function SendDiscordMessage(githubObject, title) {
+    // Initializing a Webhook instance
     const hook = new Webhook(core.getInput('discord-webhook-url'));
 
     const ActionName = core.getInput('action-name').toLowerCase();
 
     let message;
 
+    // Changing the message depending on the trigger
     if (ActionName === "started") {
         message = `**${title} 🌟**\n\n***${githubObject['event']['repository']['description']}***\n\nCheck it out :- ${githubObject['event']['repository']['html_url']}`;
     } else {
         message = `**${githubObject["repository"].split('/')[1]} ${core.getInput('release-version')} is Released 🎉 **\n***${githubObject['event']['repository']['description']}***\nCheck it out :- ${githubObject['event']['repository']['html_url']}`;
     }
 
+    // Sending the message first
     hook.send(message);
-    setTimeout(()=>{
+    setTimeout(() => {
+        // Then sending the image
         hook.sendFile('./outputImage.png');
-    },500);
+    }, 500);
 };
