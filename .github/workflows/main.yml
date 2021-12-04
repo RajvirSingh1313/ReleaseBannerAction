@@ -15,10 +15,12 @@ jobs:
         uses: ./
         with:
           action-name: ${{github.event.action}}
-          banner-theme: Dark
           release-version: ${{ github.event.release.tag_name }}
           repo-content-object: ${{ toJson(github) }}
           platform: Both
+
+          banner-theme: Dark
+
           discord-webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
           twitter-consumer-key: ${{ secrets.TWITTER_CONSUMER_API_KEY }}
           twitter-consumer-secret: ${{ secrets.TWITTER_CONSUMER_API_SECRET }}

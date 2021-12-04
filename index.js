@@ -17,15 +17,14 @@ const { exit } = require('process');
 
 /*
 Things I need to do right now:
-    * Improve your doc, tell user how to get the data to make the github action running perfectly
-    * Make custom themes for the github stars threshold
-    * Add comments to the code if possible
     * Write a beautiful readme
     * Then blog
+    * Bloopers for blog
 
     Will add in future:
         * A function that will show the reactions on the published release on github in the banner
         * Showing the tags of the repo in the banner
+        * Custom Fonts
 */
 
 // CreateImage is a function that will create a dynamic image depending on the data using sharp node module.
