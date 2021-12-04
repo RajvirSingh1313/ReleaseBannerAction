@@ -40,7 +40,7 @@ try {
 
     // Using UpperCase to prevent any mistakes in the action file
     const ReleaseVersion = core.getInput('release-version').toUpperCase();
-    const ActionName = core.getInput('action-name').toLowerCase();
+    const ActionName = githubObject.event.action.toLowerCase();
 
     let Emoji;
     let title;
@@ -124,15 +124,15 @@ function CreateImage(data, title, Emoji) {
         BannerTheme = "Dark";
     }
 
-    let totalContributors;
+    let totalContributors = 1;
 
     // Getting total number of contributors
-    axios.get(data['event']['repository']['collaborators_url'])
+    axios.get(data['event']['repository']['contributors_url'])
         .then(res => {
             totalContributors = res.data.length;
         })
         .catch(err => {
-            console.log('Error: ', err.message);
+            console.log(`Error: `, err.message);
         });
 
     // Using setTimeout to wait until request have fully fetched the data.
@@ -224,7 +224,7 @@ function CreateImage(data, title, Emoji) {
                 height: 506 * 5
             }).toFile('outputImage.png');
         }, 2000);
-    }, 1000);
+    }, 2000);
 }
 
 // SendTweet is a function that will send a tweet with banner.
@@ -243,9 +243,9 @@ function SendTweet(githubObject, title) {
     // Posting image with message
     client.post("media/upload", { media: imageData }, function (error, media, response) {
         if (error) {
-            console.log(error)
+            console.log(error);
         } else {
-            const ActionName = core.getInput('action-name').toLowerCase();
+            const ActionName = githubObject.event.action.toLowerCase();
 
             let message;
 
@@ -259,7 +259,7 @@ function SendTweet(githubObject, title) {
             const CustomMessage = core.getInput('custom-message');
 
             // If user have provided a custom message, then uses it
-            if (CustomMessage !== " " && CustomMessage !== "") {
+            if (CustomMessage !== " " && CustomMessage !== "" && CustomMessage !== undefined) {
                 message = CustomMessage;
             }
 
@@ -285,7 +285,7 @@ function SendDiscordMessage(githubObject, title) {
     // Initializing a Webhook instance
     const hook = new Webhook(core.getInput('discord-webhook-url'));
 
-    const ActionName = core.getInput('action-name').toLowerCase();
+    const ActionName = githubObject.event.action.toLowerCase();
 
     let message;
 
