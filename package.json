@@ -5,7 +5,8 @@
     "axios": "^0.24.0",
     "discord-webhook-node": "^1.1.8",
     "sharp": "^0.29.3",
-    "twitter": "^1.7.1"
+    "twitter": "^1.7.1",
+    "json-schema": ">=0.4.0"
   },
   "scripts": {
     "run-test": "ncc build index.js --license licenses.txt && git add . && git commit --amend --no-edit && git push origin master --force"

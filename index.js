@@ -39,8 +39,8 @@ try {
     const githubObject = JSON.parse(core.getInput('repo-content-object'));
 
     // Using UpperCase to prevent any mistakes in the action file
-    const ReleaseVersion = core.getInput('release-version').toUpperCase();
-    const ActionName = core.getInput('action-name').toLowerCase();
+    const ReleaseVersion = githubObject.event.release.tag_name.toUpperCase();
+    const ActionName = github.event.action.toLowerCase();
 
     let Emoji;
     let title;
@@ -124,15 +124,17 @@ function CreateImage(data, title, Emoji) {
         BannerTheme = "Dark";
     }
 
-    let totalContributors;
+    let totalContributors = 1;
 
     // Getting total number of contributors
-    axios.get(data['event']['repository']['collaborators_url'])
+    // axios.get("https://api.github.com/repos/RajvirSingh1313/ReleaseBannerAction/contributors")
+    axios.get(data['event']['repository']['contributors_url'])
         .then(res => {
             totalContributors = res.data.length;
+            core.info("Total contributors: " + totalContributors);
         })
         .catch(err => {
-            console.log('Error: ', err.message);
+            console.log(`Error: `, err.message);
         });
 
     // Using setTimeout to wait until request have fully fetched the data.
@@ -182,7 +184,7 @@ function CreateImage(data, title, Emoji) {
 
                         <text x="50%" y="45%" text-anchor="middle" class="title">${title}</text>
 
-                        <text x="17%" y="70%" text-anchor="middle" class="number">${kFormatter(totalContributors)}</text>
+                        <text x="17%" y="70%" text-anchor="middle" class="number">${kFormatter(totalContributors !== 1 ? totalContributors : 1)}</text>
                         <text x="40%" y="70%" text-anchor="middle" class="number">${kFormatter(data["event"]["repository"]["stargazers_count"])}</text>
                         <text x="59%" y="70%" text-anchor="middle" class="number">${kFormatter(data["event"]["repository"]["forks_count"])}</text>
                         <text x="83%" y="70%" text-anchor="middle" class="number">${kFormatter(data["event"]["repository"]["open_issues_count"])}</text>
@@ -224,7 +226,7 @@ function CreateImage(data, title, Emoji) {
                 height: 506 * 5
             }).toFile('outputImage.png');
         }, 2000);
-    }, 1000);
+    }, 2000);
 }
 
 // SendTweet is a function that will send a tweet with banner.
@@ -243,7 +245,7 @@ function SendTweet(githubObject, title) {
     // Posting image with message
     client.post("media/upload", { media: imageData }, function (error, media, response) {
         if (error) {
-            console.log(error)
+            console.log(error);
         } else {
             const ActionName = core.getInput('action-name').toLowerCase();
 
@@ -259,7 +261,7 @@ function SendTweet(githubObject, title) {
             const CustomMessage = core.getInput('custom-message');
 
             // If user have provided a custom message, then uses it
-            if (CustomMessage !== " " && CustomMessage !== "") {
+            if (CustomMessage !== " " && CustomMessage !== "" && CustomMessage !== undefined) {
                 message = CustomMessage;
             }
 

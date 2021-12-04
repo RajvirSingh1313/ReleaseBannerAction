@@ -89,8 +89,6 @@ jobs:
       - name: Action
         uses: RajvirSingh1313/ReleaseBannerAction@v1.1
         with:
-          action-name: ${{github.event.action}}
-          release-version: ${{ github.event.release.tag_name }}
           repo-content-object: ${{ toJson(github) }}
           platform: Both
 
@@ -107,9 +105,7 @@ jobs:
 
 | Input Name | Description | Default     | Is Required |
 | ---------- | ----------- | ----------- | ----------- |
-| `action-name` | It is for seeing whether action need to perform action on new release or repo surpassing certain threshold. | `undefined` | `True` |
 | `repo-content-object` | Object for gathering information from github api about the project for showing in the banner. | `undefined` | `True` |
-| `release-version` | For showing the latest release version in the banner. | `undefined` | `True` |
 | `platform` | For knowing on which platform the message should be sent. Type twitter or discord as input, if want both input Both. Default is Both. | `Both` | `True` |
 | `banner-theme` | Theme for the banner, There are three types of themes => Dark, Orange, Blue, Wonder, LightYear. Default is Dark. | `Dark` | `False` |
 | `custom-banner` | If you have custom banner, then enter the relative path of the banner in the repository, please learn more about how to create custom banner here :- https://github.com/RajvirSingh1313/ReleaseBannerAction#how-create--use-custom-banner | `undefined` | `False` |

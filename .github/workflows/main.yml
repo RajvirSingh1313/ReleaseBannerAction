@@ -12,10 +12,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Action
-        uses: RajvirSingh1313/ReleaseBannerAction@v1.1
+        uses: ./
         with:
-          action-name: ${{github.event.action}}
-          release-version: ${{ github.event.release.tag_name }}
+          # release-version: ${{ github.event.release.tag_name }}
           repo-content-object: ${{ toJson(github) }}
           platform: Both
 
