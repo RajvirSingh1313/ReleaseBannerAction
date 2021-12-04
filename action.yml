@@ -1,5 +1,5 @@
 name: ReleaseBannerAction
-description: ReleaseBannerAction creates custom banners about new releases or for certain GitHub stars thresholds and then posts the banner on Twitter or Discord.
+description: It creates custom banners about new releases or for certain GitHub stars thresholds and then posts the banner on Twitter or Discord.
 author: Rajvir Singh
 inputs:
   # Important
