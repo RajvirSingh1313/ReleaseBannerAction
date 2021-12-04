@@ -5,10 +5,10 @@
 <img src="https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white"/>
 </div>
 <div align="center">
-<img src="https://img.shields.io/github/contributors/RajvirSingh1313/ReleaseBannerAction"/>
-<img src="https://badgen.net/github/stars/RajvirSingh1313/ReleaseBannerAction"/>
-<img src="https://badgen.net/github/forks/RajvirSingh1313/ReleaseBannerAction"/>
-<img src="https://img.shields.io/github/issues/RajvirSingh1313/ReleaseBannerAction"/>
+<img src="https://img.shields.io/github/contributors/rajvirsingh1313/ReleaseBannerAction"/>
+<img src="https://badgen.net/github/stars/rajvirsingh1313/ReleaseBannerAction"/>
+<img src="https://badgen.net/github/forks/rajvirsingh1313/ReleaseBannerAction"/>
+<img src="https://img.shields.io/github/issues/rajvirsingh1313/ReleaseBannerAction"/>
 <img src="https://img.shields.io/apm/l/atomic-design-ui.svg"/>
 </div>
 
@@ -24,8 +24,9 @@
   - [Customizations](https://github.com/RajvirSingh1313/ReleaseBannerAction#Customizations)
     - [Themes](https://github.com/RajvirSingh1313/ReleaseBannerAction#Themes)
     - [How Create & Use Custom Banner](https://github.com/RajvirSingh1313/ReleaseBannerAction#how-create--use-custom-banner)
-- [Motivation](https://github.com/RajvirSingh1313/ReleaseBannerAction#Motivation)
+- [Story](https://github.com/RajvirSingh1313/ReleaseBannerAction#Story)
 - [RoadMap](https://github.com/RajvirSingh1313/ReleaseBannerAction#RoadMap)
+- [License](https://github.com/RajvirSingh1313/ReleaseBannerAction#License)
 <hr/>
 
 <h1><b>What is ReleaseBannerAction <i>?</i></b></h1>
@@ -111,7 +112,7 @@ jobs:
 | `release-version` | For showing the latest release version in the banner. | `undefined` | `True` |
 | `platform` | For knowing on which platform the message should be sent. Type twitter or discord as input, if want both input Both. Default is Both. | `Both` | `True` |
 | `banner-theme` | Theme for the banner, There are three types of themes => Dark, Orange, Blue, Wonder, LightYear. Default is Dark. | `Dark` | `False` |
-| `custom-banner` | If you have custom banner, then enter the url of the banner you created, please learn more about how to create custom banner here :- https://github.com/RajvirSingh1313/ReleaseBannerAction#How-Create-&-Use-Custom-Banner | `undefined` | `False` |
+| `custom-banner` | If you have custom banner, then enter the relative path of the banner in the repository, please learn more about how to create custom banner here :- https://github.com/RajvirSingh1313/ReleaseBannerAction#how-create--use-custom-banner | `undefined` | `False` |
 | `primary-color` | If have primary color for your custom banner then you can customize the primary color of the texts in the image. | `undefined` | `False` |
 | `secondary-color` | If have secondary color for your custom banner then you can customize the secondary color of the texts in the image. | `undefined` | `False` |
 | `custom-message` | If you are not happy with the default message that is sent with the banner, then you can input the message you like here. | `undefined` | `False` |
@@ -124,14 +125,14 @@ jobs:
 <h1>Customizations</h1>
 
 There are following things you can customize:
- - Themes, There are various themes you can choose.
- - Custom Banner, you can create your own banner.
+ - Themes, There are various themes you can choose. You can set the theme by adjusting the `banner-theme` property.
+ - Custom Banner, you can create your own banner. You can set the custom banner by setting the value of `custom-banner` to relative path of the banner in the repository.
  - Primary Color & Secondary Color to support the custom banner or to enhance the theme. To set primary color and secondary color, set the `primaryColor` property to primary color of your like and same for the secondary color with the `secondaryColor` property.
  - Custom message, you can customize the message that is sent with the banner. To customize the message, set the `custom-message` value to the message you like.
 
 <h2>Themes</h2>
 
-There are total of 5 themes, That I have created. I will add more themes in future.
+There are total of 5 themes, That I have created. I will add more themes in future. You can set the theme of the banner by settings the `banner-theme` property. Default is `Dark`.
 
 <h3><b>Dark</b></h3>
 <img src="Resources/ThemeShowcaseBanners/DarkShowcase.png">
@@ -154,3 +155,17 @@ There are total of 5 themes, That I have created. I will add more themes in futu
 <img src="Resources/TemplateBanner.png"/>
 
 Upper Image a simple template with all the dimensions that you will need to create a banner to align perfectly with the ReleaseBannerAction.
+
+# Story
+
+I created this project for the Github Actions 2021 Hackathon. I am pretty exhausted while writing this long readme. I am sure that it has a lot of mistakes in it, But I am just gonna ignore them. This idea came like the merged idea, as first I thought about creating an action that will just notify others, and the other one was just my curiosity about a project which was updating the Twitter profile banner with the latest tweet reactions of the user's tweet. Anyways the funny part of what happened to me is that, when I first read about this hackathon, I thought that it is just about a one-day competition as I mistakenly took 8 December as 8 November. I don't know why how I read it. But even then without confirming it, I just made a quick submission with the first idea, submitting when I read the article again, I was like wait. It is 8 December? Oh damn, then I quickly deleted it and Just chilled for like a week for some ideas to flow in my mind, but the first idea kinda just stuck in my mind. And another funny thing that happened to me while creating this project was that, Whenever I created a new developer application in the Twitter developer portal, every app got suspended after just 12 hours, And every time it happened, I just deleted the application and just created a new one. Twitter just said It violated some terms and conditions, but they never told me which ones are violated. So out of frustration, I thought what if it happened to the user who will use ReleaseBannerAction, would they also go through the same suffering. So that's when I thought about adding Discord support.
+
+# Roadmap
+
+- A function that will show the reactions on the published release on github in the banner
+- Showing the tags of the repo in the banner
+- Custom Fonts
+
+# License
+
+[MIT](https://choosealicense.com/licenses/mit/)
