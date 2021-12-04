@@ -1,6 +1,9 @@
 name: ReleaseBannerAction
 description: It creates custom images about new release or certain GitHub stars thresholds and then posts the banner on Twitter or Discord
 author: Rajvir Singh
+branding:
+  icon: 'image'  
+  color: 'blue'
 inputs:
   # Important
   action-name:

@@ -12,7 +12,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Action
-        uses: ./
+        uses: RajvirSingh1313/ReleaseBannerAction@v1.1
         with:
           action-name: ${{github.event.action}}
           release-version: ${{ github.event.release.tag_name }}
